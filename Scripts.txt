@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    tools {
+        maven 'MAVEN_HOME'
+    }
+    stages {
+        stage('Git Repo & Clean') {
+            steps {
+                // Check if the directory exists before attempting to delete it
+                bat 'if exist MavenJavaProject rmdir /s /q MavenJavaProject'
+                bat 'git clone https://github.com/rithesh10/MavenJavaProject.git'
+                bat 'mvn clean -f MavenJavaProject'
+            }
+        }
+        stage('Install') {
+            steps {
+                bat 'mvn install -f MavenJavaProject'
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvn test -f MavenJavaProject'
+            }
+        }
+        stage('Package') {
+            steps {
+                bat 'mvn package -f MavenJavaProject'
+            }
+        }
+    }
+}
