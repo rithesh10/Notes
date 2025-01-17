@@ -1,0 +1,561 @@
+SampleMaven java project : 
+
+File New other maven project next 
+
+org.apache.maven (quickstart 1.4)
+
+groupid, artifact id 
+
+right click -> maven clean, maven install, maven test, maven build-> goal: clean install test
+
+Run as Java application 
+
+Git hub : SampleMavenJavaProject gitignore(Maven) 
+
+copu url 
+git bash -> git clone ""
+
+cd thatName
+
+go to c users asus eclipse workspace project name copy them
+
+below eclipse workspace will find thatName paste them 
+
+go to git bash -> git add . git commit -m "sample Maven Java "  git push 
+
+refresh git hub 
+--------------------------------------------------------------------------------------------------------
+
+SampleMaven Web project: 
+
+
+org.apache.maven (webapp 1.4)
+
+
+Same Steps as Above :) 
+
+---------------------------------------------------------------------------------------------
+
+CI/CD for Maven Java project 
+
+
+New item -> name -> sample_maven_java_build
+
+freestyle ok
+
+Source code manage git link of(Java project)
+
+master undha ledha cross check
+
+Build steps
+
+invoke top level maven (MAVEN_HOME) (Goals: clean)
+invoke same            (MAVEN_HOME) install
+
+Add post build action: 
+
+Archive the artifacts: Files to archive: **/*
+Add (Build other projects): SampleMavenProject_test
+Save and apply
+
+
+New item -> name->  SampleMavenProject_test (freestyle ok)
+
+Delete workspace before build starts
+
+
+Build steps: copy artifacts from other project
+
+project name:  SampleMavenProject_build
+stable build only
+**/* 
+
+invoke top level maven target:  MAVEN_HOME test
+
+
+Add post build action : Files to archive **/* Save and aplly 
+
+
+Pipeline Name  then sample_maven_build click on run 
+
+----------------------------------------------------------------------------------------------------------
+
+CI/CD for MavenWeb project (TOMCAT 9 should be in start)
+
+
+New item -> name -> sample_maven_java_build
+
+freestyle ok
+
+Source code manage git link of(Java project)
+poll scm : *****
+
+master undha ledha cross check
+
+Build steps
+invoke top level maven (MAVEN_HOME) (Goals: clean)
+invoke same            (MAVEN_HOME) install
+
+Add post build action: 
+
+Archive the artifacts: Files to archive: **/*
+Add (Build other projects): SampleMavenWebProject_test
+Save and apply
+
+New item -> name->  SampleMavenWebProject_test (freestyle ok)
+
+Delete workspace before build starts
+
+
+Build steps: copy artifacts from other project
+
+project name:  SampleMavenWebProject_build
+
+stable build only
+**/* 
+
+invoke top level maven target:  MAVEN_HOME test
+Add post build action : Build other projects : SampleWebdeploy apply save
+
+
+New item SampleWebdeploy free style ok
+Delete workspace
+Build steps 
+copy from other : sampleWebProject_test **/*
+
+Add post build action : Deplot war/ear to container **/*.war conext path is as we want 
+
+Add container Tomact 9.0  credentials 
+
+username: admin pass: 12345
+
+TOMCAT URL: localhost:8083
+
+Aplly save
+
+pipeline 
+
+if asked POLL SCM as well then modify code and trigger again 
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+Jenkins scripted pipeline for Maven java project 
+
+
+new item -> name -> Pipeline 
+
+pipeline {
+    agent any
+    tools {
+        maven 'MAVEN_HOME'
+    }
+    stages {
+        stage('Git Repo & Clean') {
+            steps {
+                // Check if the directory exists before attempting to delete it
+                bat 'if exist MavenJavaProject rmdir /s /q MavenJavaProject'
+                bat 'git clone https://github.com/rithesh10/MavenJavaProject.git'
+                bat 'mvn clean -f MavenJavaProject'
+            }
+        }
+        stage('Install') {
+            steps {
+                bat 'mvn install -f MavenJavaProject'
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvn test -f MavenJavaProject'
+            }
+        }
+        stage('Package') {
+            steps {
+                bat 'mvn package -f MavenJavaProject'
+            }
+        }
+    }
+}
+
+
+Apply save 
+
+Build now 
+
+configure -> Build periodically * * * * * 
+
+----------------------------------------------------------------------------
+
+Basic web application  deploy in AWS cloud using EC2 instance
+
+go to EC2
+
+Create an empty folder named AWS
+
+Name: MySampleWebServer
+Quick Start : ubuntu
+Key pair login : Create new key pair 
+in AWS folder put it there 
+
+Network settings lo 2 options check them
+
+
+
+
+Click on launch instance
+
+Wait unitl 2/2 test cases passed
+
+click on connect 
+
+copy SSH 
+
+navigate to AWS folder paste the command (yes)
+
+sudo apt update
+sudo apt-get install docker.io
+sudo apt install git
+sudo apt  install nano 
+
+
+create folder named Example have index.html inside it 
+
+git init git add. git commit -m "First" git remote and git push  refresh the git hub copy http path 
+
+
+below installing of nano git clone link
+
+click on ls
+cd folder_name
+ls(find index.html)
+
+nano Dockerfile
+
+FROM nginx:alpine
+COPY . /usr/share/nginx/html 
+
+
+
+sudo docker build -t mywebapp .
+
+sudo docker run -d -p 80:80 mywebapp
+public ip address paste click enter 
+
+----------------------------------------------------------------------------------------------
+
+
+all similar but directly git clone sampleMavenWebproject link
+
+ls 
+cd link
+
+nano Dockerfile
+
+FROM tomcat:9-jdk21
+COPY target/*.war /usr/local/tomcat/webapps/ 
+
+
+sudo docker build -t mavenwebproject .
+sudo docker run -d -p 9090:8080  mavenwebproject
+ip:9090\that ls_wala
+
+go to instances go to security inbound rules 
+got to security groups Edit inbound rules 
+Add rule  just poert 9090 and 0.0 wala
+save rules 
+
+------------------------------------------------------------------------------------------------------
+
+
+Docker CLI commands 
+
+
+docker pull hello-world
+
+docker run hello-world
+
+docker ps -a (both run and stop)
+docker rm container_id
+docker rmi hello-world
+
+
+docker pull redis
+
+docker run --name my-redis -d redis
+
+docker exec -it my-redis redis-cli
+
+SET name "goku"
+
+GET name 
+
+docket stop my-redis can use start
+
+docker rm my-redis
+
+docker rmi redis 
+
+
+
+----------------------------------------------------------------------------------------------
+
+
+writing into a dockerfile 
+
+create a folder named RedisFolder
+
+inside it create a folder named Redis
+
+create a plain file Dockerfile(no extensions)
+
+FROM redis:latest
+CMD ["redis-server"] 
+
+
+open power shell navigate to particular folder
+
+docker build -t redisnew(name can be anything) .
+
+docker run --name myredisnew -d redisnew
+
+docker stop myredisnew
+
+docker login
+
+docker ps -a
+
+docker commit code gokulkashyap/redis1 
+
+docker push gokulkashyap/redis1
+
+docker rm code
+
+docker rmi gokulkashyap/redis1
+
+docker logout
+
+docker pull gokulkashyap/redis1
+
+docker run --name myredis -d gokulkashyap/redis1
+
+docker exec -it myredis redis-cli
+
+set name "gokul"
+
+get name
+
+docker stop myredis
+
+docker logout
+
+
+
+--------------------------------------------------------------------
+
+
+
+Modify and push 
+
+
+docker pull ubuntu
+
+docker run -it --name newubuntu -d ubuntu
+
+docker ps
+
+docker exec -it code bash
+
+git --version
+
+apt update
+apt install git -y
+
+git --version
+
+exit
+
+docker stop  code
+
+docker commit code gokulkashyap/newubuntu2024
+
+docker login 
+
+docker push gokulkashyap/newubuntu2024
+
+docker logout
+
+docker rm code
+docker rmi gokulkashyap/newubuntu2024
+
+docker pull gokulkashyap/newubuntu2024
+
+docker run --name newubuntu2024 -it gokulkashyap/newubuntu2024
+
+git --version
+
+rm , rmi 
+
+
+
+----------------------------------------------------------------------------
+
+create and push docker file image 
+
+
+
+in the project create js file
+
+function add(a, b) {
+ return a + b;
+}
+function subtract(a, b) {
+ return a - b;
+}
+function multiply(a, b) {
+ return a * b;
+} 
+function divide(a, b) {
+ if (b === 0) {
+ return "Cannot divide by zero!";
+ }
+ return a / b;
+}
+// Print the calculated values
+console.log("Addition (2 + 3):", add(2, 3));
+console.log("Subtraction (5 - 2):", subtract(5, 2));
+console.log("Multiplication (4 * 3):", multiply(4, 3));
+console.log("Division (10 / 2):", divide(10, 2)); 
+
+
+in the same directory create Dockerfile 
+
+FROM node:16-alpine
+WORKDIR /app
+COPY calculator.js /app
+CMD ["node", "calculator.js"] 
+
+
+docker build -t simple-calc .
+
+docker run simple-calc
+
+docker login
+
+docker tag simple-calc gokulkashyap/simple-calc
+
+docker push gokulkashyap/simple-calc
+
+
+docker ps -a
+
+docker rm , rmi gokulkashyap/simple-calc
+
+
+
+docker pull gokulkashyap/simple-calc
+
+docker run gokulkashyap/simple-calc
+
+docker ps -a
+
+docker rm , rmi ,log out
+
+
+
+------------------------------------------------------------------
+
+Running multiple containers using docker compose 
+
+
+
+docker-compose.yml
+
+version: '3.1'
+services:
+ db: 
+image: mysql:5.7
+ container_name: mysql_container
+ environment:
+ MYSQL_ROOT_PASSWORD: rootpassword
+ MYSQL_DATABASE: wordpress_db
+ MYSQL_USER: wordpress_user
+ MYSQL_PASSWORD: wordpress_pass
+ volumes:
+ - db_data:/var/lib/mysql
+ wordpress:
+ depends_on:
+ - db
+ image: wordpress:latest
+ container_name: wordpress_container
+ ports:
+ - "8000:80"
+ environment:
+ WORDPRESS_DB_HOST: db:3306
+ WORDPRESS_DB_USER: wordpress_user
+ WORDPRESS_DB_PASSWORD: wordpress_pass
+ WORDPRESS_DB_NAME: wordpress_db
+ volumes:
+ - ./wordpress_data:/var/www/html 
+volumes: 
+ db_data: 
+
+docker-compose up -d 
+
+http://localhost:8000
+
+docker-compose stop 
+docker-compose start 
+docker-compose down 
+
+--------------------------------------------------------------------
+
+
+
+minikube :
+
+minikube start
+
+kubectl create deployment mynginx --image=nginx
+
+kubectl get deployments
+
+kubectl expose deployment mynginx --type=NodePort --port=80 --target-port=80
+kubectl scale deployment mynginx --replicas=4 
+
+kubectl port-forward svc/mynginx 8081:80 
+http://localhost:8081
+
+-----------------------------------------------------------
+
+
+Nagios: 
+
+
+docker pull jasonrivers/nagios:latest 
+
+docker run --name nagiosdemo -p 8888:80 jasonrivers/nagios:latest 
+localhost:8888 
+nagiosadmin
+nagios
+
+
+
+Jenkins 
+
+gokulkashyap
+
+12345 
+
+
+
+docker 
+
+gokulkashyapgannamaraju@gmail.com
+Kashyap@007
+
+
+AWS 
+
+
+gokulkashyapgannamaraju@gmail.com
+Kashyap@007
